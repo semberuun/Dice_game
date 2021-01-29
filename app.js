@@ -1,51 +1,83 @@
-// Тоглогчийн ээлжийг хадгалах хувьсагч 1 тоглогчийг 0 2 дугаар тоглогчийг 1 тэмдэгдэе
-var activePlayer = 0;
 
-// Тоглогчдын цуглуулсан оноог хадгадах хувьсагч
-var scores = [0, 0];
-
-// Тоглогчдын ээлжийн оноог хадгалах хувьсагч
-var roundScore = 0;
-
-
-// Програм эхлэхэд бэлдэе
-document.getElementById('current-0').textContent = 0;
-document.getElementById('current-1').textContent = 0;
-
-document.getElementById('score-0').textContent = 0;
-document.getElementById('score-1').textContent = 0;
+var activePlayer, scores, roundScore;
+var isGameOver;
 
 var diceDom = document.querySelector('.dice');
-diceDom.style.display = "none";
+initGame();
 
-document.querySelector('.btn-roll').addEventListener('click', function () {
-    // Шооны аль талаара буусныг хадгалах хувьсагч, 1-6 тооны санамсаргүй 
-    var diceNumber = Math.floor(Math.random() * 6) + 1;
+// Програм эхлэхэд бэлдэе
+function initGame() {
+    isGameOver = false;
+    activePlayer = 0;
+    // Тоглогчдын цуглуулсан оноог хадгадах хувьсагч
+    scores = [0, 0];
+    // Тоглогчдын ээлжийн оноог хадгалах хувьсагч
+    roundScore = 0;
 
-    // шооны зургийг веб дээр гаргаж ирнэ
-    diceDom.style.display = 'block'
-    // шооны зургийг тохируулж гаргаж ирнэ
-    diceDom.src = 'dice-' + diceNumber + '.png';
-    // ээлжийн оноог бодно 1 бол ээлжийн сольж оноог 0 болгон
-    if (diceNumber !== 1) {
-        roundScore = roundScore + diceNumber;
-        document.getElementById('current-' + activePlayer).textContent = roundScore;
-    } else {
-        // 1 буусан бол тоглогчийн ээлжийг сольно
-        switchToNextPlayer();   // DRY dont repeat yourself
-    }
+    document.getElementById('current-0').textContent = 0;
+    document.getElementById('current-1').textContent = 0;
+
+    document.getElementById('score-0').textContent = 0;
+    document.getElementById('score-1').textContent = 0;
+
+    document.getElementById('name-0').textContent = 'Player 1';
+    document.getElementById('name-1').textContent = 'Player 2';
+
+    document.querySelector('.player-0-panel').classList.remove('winner');
+    document.querySelector('.player-1-panel').classList.remove('winner');
+
+    document.querySelector('.player-0-panel').classList.remove('active');
+    document.querySelector('.player-1-panel').classList.remove('active');
+
+    document.querySelector('.player-0-panel').classList.add('active');
+
+    diceDom.style.display = "none";
+}
+
+// NEW GAME товч ажлуулах хэсэг
+document.querySelector('.btn-new').addEventListener('click', function () {
+    initGame();
 });
 
-document.querySelector('.btn-hold').addEventListener('click', function () {
-    // Уг тоглогчийн ээлжийн оноог глобал оноо руу шилжүүлэх
-    scores[activePlayer] = scores[activePlayer] + roundScore;
-    document.getElementById('score-' + activePlayer).textContent = scores[activePlayer];
-    if (scores[activePlayer] >= 10) {
-        document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
-        document.getElementById('name-' + activePlayer).textContent = 'WINNER!!!!';
-        document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+// ROLL DICE товчл ажлуулах хэсэг
+document.querySelector('.btn-roll').addEventListener('click', function () {
+    if (isGameOver === false) {
+        // Шооны аль талаара буусныг хадгалах хувьсагч, 1-6 тооны санамсаргүй 
+        var diceNumber = Math.floor(Math.random() * 6) + 1;
+
+        // шооны зургийг веб дээр гаргаж ирнэ
+        diceDom.style.display = 'block'
+        // шооны зургийг тохируулж гаргаж ирнэ
+        diceDom.src = 'dice-' + diceNumber + '.png';
+        // ээлжийн оноог бодно 1 бол ээлжийн сольж оноог 0 болгон
+        if (diceNumber !== 1) {
+            roundScore = roundScore + diceNumber;
+            document.getElementById('current-' + activePlayer).textContent = roundScore;
+        } else {
+            // 1 буусан бол тоглогчийн ээлжийг сольно
+            switchToNextPlayer();   // DRY dont repeat yourself
+        }
     } else {
-        switchToNextPlayer();
+        alert('Тоглоом дууслаа NEW GAME товч дарна уу');
+    }
+
+});
+// hold Товч ажлуулах хэсэг
+document.querySelector('.btn-hold').addEventListener('click', function () {
+    if (isGameOver === false) {
+        // Уг тоглогчийн ээлжийн оноог глобал оноо руу шилжүүлэх
+        scores[activePlayer] = scores[activePlayer] + roundScore;
+        document.getElementById('score-' + activePlayer).textContent = scores[activePlayer];
+        if (scores[activePlayer] >= 10) {
+            isGameOver = true;
+            document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
+            document.getElementById('name-' + activePlayer).textContent = 'WINNER!!!!';
+            document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+        } else {
+            switchToNextPlayer();
+        }
+    } else {
+        alert('Тоглоом дууслаа NEW GAME товч дарна уу');
     }
 });
 
@@ -65,4 +97,5 @@ function switchToNextPlayer() {
     document.querySelector(".player-1-panel").classList.toggle('active');
     diceDom.style.display = "none";
 }
+
 
