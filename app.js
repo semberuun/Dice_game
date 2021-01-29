@@ -68,7 +68,7 @@ document.querySelector('.btn-hold').addEventListener('click', function () {
         // Уг тоглогчийн ээлжийн оноог глобал оноо руу шилжүүлэх
         scores[activePlayer] = scores[activePlayer] + roundScore;
         document.getElementById('score-' + activePlayer).textContent = scores[activePlayer];
-        if (scores[activePlayer] >= 10) {
+        if (scores[activePlayer] >= 100) {
             isGameOver = true;
             document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
             document.getElementById('name-' + activePlayer).textContent = 'WINNER!!!!';
